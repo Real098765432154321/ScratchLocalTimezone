@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Local Timezone
 // @namespace    http://tampermonkey.net/
-// @version      2024-09-05
+// @version      2024-09-07
 // @description  Uses local timezone on Scratch forums instead of Scratch Time
 // @author       098765432154321
 // @match        *://scratch.mit.edu/discuss/*
@@ -10,11 +10,12 @@
 // @run-at       document-body
 // @downloadURL  https://raw.githubusercontent.com/Real098765432154321/ScratchLocalTimezone/master/main.user.js
 // @updateURL    https://raw.githubusercontent.com/Real098765432154321/ScratchLocalTimezone/master/main.user.js
+// @history      2024-09-07 Just realized that fix made it worse. Now it should work
 // @history      2024-09-05 Add to homepage & subforum pages, (hopefully) fix bug with last day of a month not showing Yesterday, changed description
 // @history      2024-08-29 Initial
 // ==/UserScript==
 
-const path = location.href.split("/").slice(4)
+const path = location.href.split("/").slice(4);
 
 const months = ["Jan.", "Feb.", "March", "April", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."];
 const now = new Date();
@@ -37,7 +38,7 @@ function fix(el) {
     };
     args.push(...split[split.length - 1].split(":").map(e => +e));
     const date = new Date(new Date(...args) - -(offset - (text[0] == "Y") * 864e5));
-    el.innerText = (["Today", "Yesterday"][Math.floor((now - date) / 864e5)] || (months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear())) + " " + addZero(date.getHours()) + ":" + addZero(date.getMinutes()) + ":" + addZero(date.getSeconds())
+    el.innerText = (["Today", "Yesterday"][Math.floor(now / 864e5) - Math.floor(date / 864e5)] || (months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear())) + " " + addZero(date.getHours()) + ":" + addZero(date.getMinutes()) + ":" + addZero(date.getSeconds())
 };
 
 document.querySelectorAll((path[0] != "topic" ? ".tcr" : ".box-head") + "> a").forEach(fix);
